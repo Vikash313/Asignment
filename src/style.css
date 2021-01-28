@@ -1,0 +1,14 @@
+.options {
+    padding: 5px;
+    border: 1px solid #000;
+    cursor: pointer;
+    width: 20%;
+    background-color: white;
+    color: blue;
+    font-weight: bold;
+    border-radius: 7px;
+}
+
+.selected {
+    background-color: red !important
+}
