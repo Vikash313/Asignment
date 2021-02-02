@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import  { qBank }  from './QuestCollection'
 import '../style.css'
 import PopUp from './PopUp'
-import ControlledPopup from './ControlledPopup'
+
 
 class Quiz extends Component {
 
@@ -91,7 +91,6 @@ class Quiz extends Component {
                  {/*{<PopUp text={this.state.score} />}*/}
                  <h2>Congratulations!! Your Quiz is completed</h2>
                  <h2>Your Score is {this.state.score} out of {qBank.length} </h2>
-                 <ControlledPopup />
              </div>
           )
          }
