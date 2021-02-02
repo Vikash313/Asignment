@@ -1,0 +1,2 @@
+export const QUEST_NEXT_ASYNC = 'QUEST_NEXT_ASYNC';
+export const QUEST_SUBMIT = 'QUEST_SUBMIT';

@@ -7,11 +7,19 @@ import reducer from './store/reducer'
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
+import { watchQuestNext } from './sagas/saga'
+//import rootSaga from './sagas/index'
+//import reducer from './reducers'
 
 const sagaMiddleware = createSagaMiddleware();
 
 const store = createStore(reducer, applyMiddleware(sagaMiddleware));
-// sagaMiddleware.run()
+sagaMiddleware.run(watchQuestNext);
+
+//store.dispatch({type: 'LOGOUT'});
+//store.dispatch({type: 'LOGIN'});
+//store.dispatch({type: 'LOGOUT'});
+//store.dispatch({ type: 'DANG'})
 
 ReactDOM.render(
   <Provider store = {store}>

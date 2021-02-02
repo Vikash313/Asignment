@@ -1,56 +1,61 @@
-import React, { Component, useEffect } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import ScoreDisplay from './ScoreDisplay'
 import  { qBank }  from './QuestCollection'
 import '../style.css'
+import PopUp from './PopUp'
+import ControlledPopup from './ControlledPopup'
 
 class Quiz extends Component {
 
     constructor(props) {
-        super(props)
-    
+        super(props);
+        this.onquestNext = this.onquestNext.bind(this);
+        this.submitHandler = this.submitHandler.bind(this);
+
         this.state = {
              options: [],
              Answer: null,
-             cIndex : 0,
              disabled: true,
              qFinish: false,
              score: 0
         }
     }
 
+
     getQuestion = () => {
-        const{cIndex} = this.state;
         this.setState(() => {
             return{
-                question: qBank[cIndex].question,
-                options: qBank[cIndex].options,
-                answer: qBank[cIndex].answer
+                question: qBank[this.props.cIndex].question,
+                options: qBank[this.props.cIndex].options,
+                answer: qBank[this.props.cIndex].answer  
             }
         })
     }
+
 
     componentDidMount(){
         this.getQuestion();
     }
 
-    nextHandler = () => {
-        const { Answer, answer, score } = this.state
-
+    onquestNext = () => {
+        const { Answer, score, answer  } = this.state
+        console.log("score")
         if(Answer === answer){
+            console.log("Resubmitted")
             this.setState({
                 score: score + 1
             })
         }
 
         this.setState({
-            cIndex: this.state.cIndex + 1,
+            cIndex: this.props.cIndex + 1,
             Answer: null
         })
     }
 
     submitHandler = () => {
-        if(this.state.cIndex === qBank.length -1){
+        console.log("Submitted")
+        if(this.props.cIndex === qBank.length - 1){
             this.setState({
                 qFinish: true
             })
@@ -64,66 +69,52 @@ class Quiz extends Component {
         })
     }
 
-    componentDidUpdate(prevProps, prevState){
-        const{cIndex} = this.state;
-        if(this.state.cIndex !== prevState.cIndex){
-           this.setState(() => {
+
+    componentDidUpdate = (prevProps, prevState) => {
+        if(this.props.cIndex !== prevProps.cIndex){
+           this.setState((prevProps) => {
              return{
-                question: qBank[cIndex].question,
-                options: qBank[cIndex].options,
-                answer: qBank[cIndex].answer
+                question: qBank[this.props.cIndex].question,
+                options: qBank[this.props.cIndex].options,
+                answer: qBank[this.props.cIndex].answer
               }
             })
         }
     }
-    
-    //  useEffect(() => {
-    //      getQuestion();
-    //  },[])
-    // state = {
-    //     questionBank: []
-    // };
 
-    // getQuestions = () => {
-    //     QuestCollection().then(question => {
-    //         this.setState({
-    //             questionBank: question
-    //         });
-    //     });
-
-    // };
-
-    // componentDidMount() {
-    //     this.getQuestions();
-    // }
     render() {
-        const{ question, options, cIndex, Answer, qFinish } = this.state
+        const{ question, options, Answer, qFinish } = this.state
         
         if(qFinish) {
          return (
              <div>
-                 <h2>Your Score is {this.state.score} out of 12</h2>
+                 {/*{<PopUp text={this.state.score} />}*/}
+                 <h2>Congratulations!! Your Quiz is completed</h2>
+                 <h2>Your Score is {this.state.score} out of {qBank.length} </h2>
+                 <ControlledPopup />
              </div>
           )
          }
          
         return (
             <div>
+                {console.log("this.props", this.props)}
+                {console.log("Index", this.props.cIndex)}
                 <h2>{question}</h2>
-                <span>{`Question ${cIndex + 1} of ${qBank.length} `}</span>
+                <span>{`Question ${this.props.cIndex + 1} of ${qBank.length} `}</span>
                 {
-                    options.map(option => 
+                    options.map((option, index ) => 
                         <p key ={option.id} className={`options ${Answer === option? "selected" : null}`}
                             onClick = {() => this.checkAnswer(option)}>
                                 {option}
                         </p>
                         )
                 }
-                {cIndex < qBank.length - 1 && 
-                <button disabled = {this.state.disabled} onClick={this.nextHandler}>
+                {this.props.cIndex  < qBank.length - 1 && 
+                <button disabled = {this.state.disabled} onClick={() => {this.props.onquestNext();this.onquestNext()}}>
                     Next </button>}
-                {cIndex === qBank.length -1 &&
-                <button onClick={this.submitHandler} disabled ={this.state.disabled} >
+                {this.props.cIndex === qBank.length - 1 &&
+                <button onClick={() => {this.submitHandler()}} disabled ={this.state.disabled} >
                     Submit
                 </button> }
             </div>
@@ -131,24 +122,20 @@ class Quiz extends Component {
         
     }
 }
-
+ 
 
 const mapStateToProps = state => {
     return{
-    answer: state.answer
-
+    cIndex: state.cIndex
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return{
-    onquestNext: () => dispatch({type: 'QUEST_NEXT', value: 1})
+    onquestNext: () => dispatch({type: 'QUEST_NEXT_ASYNC', value: 1}), 
+    
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Quiz)
 
-//export default Quiz
-
-// {this.state.questionBank.length > 0 && 
-//     this.state.questionBank.map(({Id, question, answers, corretcIndex}) => <h4>{question}</h4>)}
