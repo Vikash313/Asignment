@@ -19,3 +19,6 @@ function PopUp(props) {
 }
 
 export default PopUp
+
+
+//"start": "react-scripts start",
